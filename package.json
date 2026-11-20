@@ -1,0 +1,14 @@
+{
+  "name": "ptero-termux",
+  "version": "1.0.0",
+  "description": "Panel mirip Pterodactyl untuk Termux",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "ws": "^8.17.0",
+    "adm-zip": "^0.5.16"
+  }
+}
