@@ -5,85 +5,124 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Panel Server</title>
 <style>
-:root{--bg:#0b0f14;--s1:#121922;--s3:#1f2a37;--line:#263344;--tx:#e6edf3;--mut:#8b98a8;--acc:#3b82f6;--ok:#22c55e;--warn:#eab308;--bad:#ef4444;--r:10px}
+:root{--cream:#FFF3D1;--paper:#FFFBEF;--blue:#2F6BFF;--blue2:#1B4BD1;--ink:#121212;--yellow:#FFD84D;--green:#3DDC84;--red:#FF5A5F;--grey:#E7E1CF;--r:16px}
 *{box-sizing:border-box}
-html,body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.5 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-a{color:var(--acc);text-decoration:none;cursor:pointer}
-code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;background:var(--s3);padding:2px 7px;border-radius:6px;word-break:break-all}
-.top{position:sticky;top:0;z-index:9;background:rgba(18,25,34,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);height:56px;display:flex;align-items:center;gap:6px;padding:0 14px}
-.brand{font-weight:700;font-size:16px;margin-right:14px}
-.top a.nl{color:var(--mut);padding:7px 11px;border-radius:8px}
-.top a.nl:hover,.top a.nl.on{color:var(--tx);background:var(--s3)}
-.sp{flex:1}.who{color:var(--mut);font-size:13px;margin-right:6px}
-.wrap{max-width:1180px;margin:0 auto;padding:22px 16px 60px}
-h1{font-size:22px;margin:0;font-weight:650}
-.head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
-.card{background:var(--s1);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:14px}
-.card h2{font-size:15px;margin:0 0 12px;font-weight:600}
-.muted{color:var(--mut)}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
-.srv{display:block;background:var(--s1);border:1px solid var(--line);border-radius:var(--r);padding:16px;color:var(--tx);transition:border-color .15s,transform .15s}
-.srv:hover{border-color:var(--acc);transform:translateY(-1px)}
-.srv .n{font-weight:600;font-size:15px;margin-bottom:6px;display:flex;justify-content:space-between;gap:8px}
-.badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:3px 9px;border-radius:99px;background:var(--s3);color:var(--mut);white-space:nowrap}
-.badge:before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
-.badge.running{color:var(--ok)}.badge.starting,.badge.stopping{color:var(--warn)}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:var(--acc);color:#fff;border:0;border-radius:8px;padding:9px 15px;font:inherit;font-weight:600;cursor:pointer;white-space:nowrap}
-.btn:hover{filter:brightness(1.1)}.btn:disabled{opacity:.5;cursor:default}
-.btn.ok{background:var(--ok);color:#06240f}.btn.warn{background:var(--warn);color:#2a2100}.btn.bad{background:var(--bad)}
-.btn.ghost{background:var(--s3);color:var(--tx);border:1px solid var(--line)}
-.btn.sm{padding:6px 11px;font-size:13px}
-input,select,textarea{background:var(--bg);border:1px solid var(--line);color:var(--tx);border-radius:8px;padding:9px 11px;font:inherit;width:100%;min-width:0}
-input:focus,select:focus,textarea:focus{outline:0;border-color:var(--acc);box-shadow:0 0 0 3px rgba(59,130,246,.2)}
-label.chk{display:flex;align-items:center;gap:6px;color:var(--mut);white-space:nowrap}
-label.chk input{width:auto}
-.form{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.form>*{flex:1 1 150px;width:auto}.form>.btn{flex:0 0 auto}
-.err{color:var(--bad);font-size:13px;min-height:18px;margin-top:8px}
-table{width:100%;border-collapse:collapse}
-th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
-th{color:var(--mut);font-weight:500;font-size:12.5px;text-transform:uppercase;letter-spacing:.04em}
-tr:last-child td{border-bottom:0}
-.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:16px;overflow-x:auto}
-.tabs a{padding:10px 14px;color:var(--mut);border-bottom:2px solid transparent;white-space:nowrap;margin-bottom:-1px}
-.tabs a.on{color:var(--tx);border-color:var(--acc)}
-.power{display:flex;gap:8px;flex-wrap:wrap}
-.term{background:#06090d;border:1px solid var(--line);border-radius:var(--r) var(--r) 0 0;height:min(60vh,520px);overflow:auto;padding:12px 14px;font:12.5px/1.5 ui-monospace,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word;color:#cfd8e3}
-.cmd{display:flex;align-items:center;background:#06090d;border:1px solid var(--line);border-top:0;padding:0 12px}
-.cmd span{color:var(--acc);font-family:ui-monospace,monospace;margin-right:8px}
-.cmd input{border:0;background:transparent;padding:11px 0;font-family:ui-monospace,monospace;box-shadow:none!important}
-.info{display:grid;grid-template-columns:repeat(3,1fr);background:var(--s1);border:1px solid var(--line);border-top:0;border-radius:0 0 var(--r) var(--r)}
-.info>div{padding:12px 14px;border-right:1px solid var(--line);min-width:0}
-.info>div:last-child{border-right:0}
-.lb{color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;display:flex;justify-content:space-between;align-items:center}
-.v{font-weight:600;font-size:15px}
-.bar{height:6px;background:var(--s3);border-radius:99px;overflow:hidden;margin-top:8px}
-.bar i{display:block;height:100%;width:0;background:var(--acc);border-radius:99px;transition:width .4s ease}
-.addr code{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:4px}
-.toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
-.crumbs{display:flex;gap:4px;flex-wrap:wrap;align-items:center;font-family:ui-monospace,monospace;font-size:13px}
-.crumbs a{color:var(--tx)}.crumbs .sep{color:var(--mut)}
-.files td.nm{cursor:pointer;font-weight:500}
-.files td.nm:hover{color:var(--acc)}
+html,body{margin:0;min-height:100%}
+body{background:var(--cream);background-image:radial-gradient(rgba(18,18,18,.12) 1.2px,transparent 1.2px);background-size:20px 20px;color:var(--ink);font:600 15px/1.5 "Trebuchet MS","Segoe UI",system-ui,sans-serif}
+a{color:var(--ink);text-decoration:none;cursor:pointer}
+code{font:700 12.5px ui-monospace,Menlo,Consolas,monospace;background:var(--yellow);border:2px solid var(--ink);padding:1px 7px;border-radius:8px;word-break:break-all}
+h1{font:900 26px "Trebuchet MS",system-ui,sans-serif;margin:0;letter-spacing:-.3px}
+h2{font:900 16px "Trebuchet MS",system-ui,sans-serif;margin:0 0 12px;text-transform:uppercase;letter-spacing:.5px}
+.muted{color:#5a5443;font-weight:600}
+/* top bar */
+.top{position:sticky;top:0;z-index:20;background:var(--yellow);border-bottom:4px solid var(--ink);box-shadow:0 5px 0 var(--ink);display:flex;align-items:center;gap:10px;padding:10px 14px;min-height:68px}
+.brand{background:var(--blue);color:#fff;border:3px solid var(--ink);box-shadow:4px 4px 0 var(--ink);border-radius:12px;padding:6px 14px;font:900 16px "Trebuchet MS",system-ui,sans-serif;letter-spacing:1.5px;text-transform:uppercase;transform:rotate(-2deg)}
+.nav{display:flex;gap:8px;margin-left:8px}
+.nav a{border:3px solid var(--ink);background:var(--paper);padding:6px 12px;border-radius:12px;box-shadow:3px 3px 0 var(--ink);font-weight:800}
+.nav a.on{background:var(--blue);color:#fff}
+.nav a:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+.sp{flex:1}
+.who{font-weight:800;border:3px solid var(--ink);background:var(--paper);border-radius:99px;padding:3px 12px}
+.wrap{max-width:1200px;margin:0 auto;padding:26px 16px 80px}
+/* kartu 3D */
+.card{background:var(--paper);border:3px solid var(--ink);border-radius:var(--r);box-shadow:8px 8px 0 var(--ink);padding:18px;margin-bottom:24px;position:relative}
+.card.blue{background:var(--blue);color:#fff}
+.card.yellow{background:var(--yellow)}
+.head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:20px}
+.srv{display:block;background:var(--paper);border:3px solid var(--ink);border-radius:var(--r);box-shadow:7px 7px 0 var(--ink);padding:16px;transition:transform .12s,box-shadow .12s;color:var(--ink)}
+.srv:hover{transform:translate(-3px,-3px);box-shadow:10px 10px 0 var(--ink)}
+.srv .n{display:flex;justify-content:space-between;gap:8px;align-items:center;font:900 17px "Trebuchet MS",system-ui,sans-serif;margin-bottom:8px}
+/* badge */
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:900;padding:3px 10px;border:2px solid var(--ink);border-radius:99px;background:var(--grey);white-space:nowrap;text-transform:uppercase;letter-spacing:.3px}
+.badge:before{content:"";width:9px;height:9px;border-radius:50%;background:var(--ink)}
+.badge.running{background:var(--green)}
+.badge.starting,.badge.stopping{background:var(--yellow)}
+.badge.offline{background:var(--grey)}
+.chip{display:inline-block;font-size:12px;font-weight:800;padding:2px 9px;border:2px solid var(--ink);border-radius:8px;background:#fff}
+/* tombol 3D */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:var(--blue);color:#fff;border:3px solid var(--ink);border-radius:12px;padding:9px 16px;font:900 14px "Trebuchet MS",system-ui,sans-serif;text-transform:uppercase;letter-spacing:.3px;box-shadow:4px 4px 0 var(--ink);cursor:pointer;transition:transform .08s,box-shadow .08s;white-space:nowrap}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
+.btn:active{transform:translate(4px,4px);box-shadow:0 0 0 var(--ink)}
+.btn:disabled{opacity:.5;cursor:default;transform:none;box-shadow:4px 4px 0 var(--ink)}
+.btn.green{background:var(--green);color:var(--ink)}
+.btn.yellow{background:var(--yellow);color:var(--ink)}
+.btn.red{background:var(--red);color:var(--ink)}
+.btn.paper{background:var(--paper);color:var(--ink)}
+.btn.sm{padding:6px 11px;font-size:12px;box-shadow:3px 3px 0 var(--ink)}
+.btn.sm:hover{box-shadow:5px 5px 0 var(--ink)}
+/* input */
+input,select,textarea{background:#fff;border:3px solid var(--ink);border-radius:12px;padding:10px 12px;font:700 15px "Trebuchet MS",system-ui,sans-serif;color:var(--ink);width:100%;min-width:0;box-shadow:inset 3px 3px 0 rgba(18,18,18,.08)}
+input:focus,select:focus,textarea:focus{outline:0;background:#FFFDF5;box-shadow:0 0 0 4px var(--yellow),inset 3px 3px 0 rgba(18,18,18,.08)}
+label.chk{display:flex;align-items:center;gap:8px;font-weight:800;white-space:nowrap}
+label.chk input{width:22px;height:22px;accent-color:var(--blue)}
+.form{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.form>*{flex:1 1 160px;width:auto}.form>.btn{flex:0 0 auto}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.field label{font-weight:900;font-size:13px;text-transform:uppercase;letter-spacing:.4px}
+.err{color:#c00000;font-weight:800;min-height:20px;margin-top:10px}
+/* tabel */
+.tbl{width:100%;border-collapse:separate;border-spacing:0;border:3px solid var(--ink);border-radius:var(--r);overflow:hidden;background:#fff}
+.tbl th{background:var(--yellow);text-align:left;padding:10px;border-bottom:3px solid var(--ink);font:900 12px "Trebuchet MS",system-ui,sans-serif;text-transform:uppercase;letter-spacing:.5px}
+.tbl td{padding:10px;border-bottom:2px solid var(--ink);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:0}
+/* tab */
+.tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px}
+.tabs a{border:3px solid var(--ink);background:var(--paper);padding:9px 16px;border-radius:12px;box-shadow:4px 4px 0 var(--ink);font:900 14px "Trebuchet MS",system-ui,sans-serif;text-transform:uppercase}
+.tabs a.on{background:var(--blue);color:#fff}
+.tabs a:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
+.power{display:flex;gap:10px;flex-wrap:wrap}
+/* terminal */
+.termwrap{border:3px solid var(--ink);border-radius:var(--r);overflow:hidden;box-shadow:8px 8px 0 var(--ink);background:#14142b}
+.termbar{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--blue);color:#fff;padding:10px 14px;border-bottom:3px solid var(--ink);font:900 13px "Trebuchet MS",system-ui,sans-serif;text-transform:uppercase;letter-spacing:.5px}
+.termbar .dots{display:flex;gap:6px}
+.termbar .dots i{width:12px;height:12px;border-radius:50%;border:2px solid var(--ink);background:var(--yellow)}
+.termbar .dots i:nth-child(2){background:var(--green)}.termbar .dots i:nth-child(3){background:var(--red)}
+.term{height:min(56vh,500px);overflow:auto;padding:14px;font:13px/1.55 ui-monospace,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word;color:#e9ecff}
+.term div{min-height:1.2em}
+.cmd{display:flex;align-items:center;gap:10px;background:#0c0c1d;border-top:3px solid var(--ink);padding:10px 12px}
+.cmd span{color:var(--yellow);font:900 18px ui-monospace,monospace}
+.cmd input{border:2px solid var(--ink);background:#1d1d3a;color:#fff;font:600 14px ui-monospace,monospace;box-shadow:none;padding:9px 12px}
+.cmd input:focus{background:#25254a;box-shadow:0 0 0 3px var(--yellow)}
+.cmd input::placeholder{color:#8e93b8}
+.hintbar{background:var(--yellow);border-bottom:3px solid var(--ink);padding:9px 14px;font-weight:700;font-size:13px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:3px solid var(--ink);border-top:0;background:var(--paper);border-radius:0 0 var(--r) var(--r)}
+.stats>div{padding:14px;border-right:3px solid var(--ink);min-width:0}
+.stats>div:last-child{border-right:0}
+.lb{font:900 12px "Trebuchet MS",system-ui,sans-serif;text-transform:uppercase;letter-spacing:.5px;display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.v{font:900 20px "Trebuchet MS",system-ui,sans-serif}
+.bar{height:16px;background:#fff;border:3px solid var(--ink);border-radius:99px;overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%;width:0;background:repeating-linear-gradient(45deg,var(--blue) 0 10px,var(--blue2) 10px 20px);border-right:3px solid var(--ink);transition:width .4s ease}
+.addr code{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:6px;font-size:12px}
+/* file */
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.crumbs{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font:800 14px ui-monospace,monospace}
+.crumbs a{border:2px solid var(--ink);background:#fff;padding:2px 9px;border-radius:8px}
+.crumbs .sep{color:#5a5443}
+.files td.nm{cursor:pointer;font-weight:800}
+.files td.nm:hover{color:var(--blue)}
 .files .act{text-align:right;white-space:nowrap}
-.files .act a,.files .act button{margin-left:10px;font-size:13px;color:var(--mut);background:none;border:0;padding:0;font:inherit;cursor:pointer}
-.files .act button:hover{color:var(--bad)}
-.up{display:flex;flex-direction:column;gap:6px}
-.up .row{display:flex;justify-content:space-between;gap:10px}
-.spin{width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--acc);border-radius:50%;animation:sp .7s linear infinite;display:inline-block;vertical-align:middle}
+.files .act a,.files .act button{margin-left:8px}
+.up{display:flex;flex-direction:column;gap:8px}
+.up .row{display:flex;justify-content:space-between;gap:10px;align-items:center;font-weight:800}
+.spin{width:18px;height:18px;border:3px solid var(--ink);border-top-color:var(--blue);border-radius:50%;animation:sp .7s linear infinite;display:inline-block;vertical-align:middle}
 @keyframes sp{to{transform:rotate(360deg)}}
-.empty{color:var(--mut);text-align:center;padding:30px 10px}
-.login{max-width:380px;margin:12vh auto 0;padding:0 16px}
-.login .card{padding:26px}
-.login h1{text-align:center;margin-bottom:6px}
-.login p.sub{text-align:center;color:var(--mut);margin:0 0 20px}
-.login .btn{width:100%;padding:11px}
-textarea.code{font-family:ui-monospace,Menlo,monospace;font-size:13px;min-height:55vh;resize:vertical;line-height:1.5}
-.field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
-.field label{color:var(--mut);font-size:13px}
-.hint{color:var(--mut);font-size:13px;margin-top:8px}
-.kv{display:grid;grid-template-columns:120px 1fr;gap:8px 12px;align-items:center;margin-bottom:12px}
-@media(max-width:700px){.info{grid-template-columns:1fr}.info>div{border-right:0;border-bottom:1px solid var(--line)}.kv{grid-template-columns:1fr}}
+.empty{text-align:center;padding:34px 10px;font-weight:800;color:#5a5443}
+textarea.code{font:600 14px ui-monospace,Menlo,monospace;min-height:55vh;resize:vertical;line-height:1.55}
+.kv{display:grid;grid-template-columns:140px 1fr;gap:10px 14px;align-items:center}
+.hint{font-size:13px;font-weight:700;color:#5a5443;margin-top:10px}
+/* login */
+.login{max-width:400px;margin:10vh auto 0;padding:0 16px}
+.login .card{padding:28px;transform:rotate(-1deg)}
+.login h1{text-align:center;margin-bottom:6px;font-size:30px}
+.login p.sub{text-align:center;margin:0 0 22px}
+.login .btn{width:100%;padding:13px;font-size:16px}
+/* modal */
+.overlay{position:fixed;inset:0;background:rgba(18,18,18,.45);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal{background:var(--paper);border:4px solid var(--ink);border-radius:var(--r);box-shadow:10px 10px 0 var(--ink);padding:22px;width:100%;max-width:420px}
+.modal h3{font:900 20px "Trebuchet MS",system-ui,sans-serif;margin:0 0 14px;text-transform:uppercase}
+.modal .row{display:flex;gap:10px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}
+@media(max-width:760px){.stats{grid-template-columns:1fr}.stats>div{border-right:0;border-bottom:3px solid var(--ink)}.stats>div:last-child{border-bottom:0}.kv{grid-template-columns:1fr}.nav{display:none}.top{flex-wrap:wrap}}
 </style>
 </head>
 <body>
@@ -92,7 +131,7 @@ textarea.code{font-family:ui-monospace,Menlo,monospace;font-size:13px;min-height
 const $=s=>document.querySelector(s);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt=b=>b>1048576?(b/1048576).toFixed(1)+' MB':b>1024?(b/1024).toFixed(1)+' KB':b+' B';
-const LBL={running:'Berjalan',offline:'Mati',starting:'Memulai',stopping:'Menghentikan'};
+const LBL={running:'Berjalan',offline:'Mati',starting:'Memulai',stopping:'Berhenti'};
 const LTYPE={node:'Node.js',python:'Python',web:'Web statis'};
 const badge=s=>`<span class="badge ${esc(s)}">${LBL[s]||esc(s)}</span>`;
 const tlabel=s=>LTYPE[s.type||'node']||'Node.js';
@@ -113,104 +152,139 @@ const app=()=>$('#app');
 const join=n=>(cwd==='/'?'':cwd)+'/'+n;
 const parent=()=>cwd.split('/').slice(0,-1).join('/')||'/';
 function closeWs(){if(ws){try{ws.close()}catch{}ws=null}if(pollT){clearInterval(pollT);pollT=null}}
+
+function modal(title,body,onOk,okText){
+  const m=document.createElement('div');m.className='overlay';
+  m.innerHTML=`<div class="modal"><h3>${esc(title)}</h3>${body}<div class="err" id="me"></div>
+    <div class="row"><button class="btn paper sm" id="mc">Batal</button><button class="btn sm" id="mo">${esc(okText||'Simpan')}</button></div></div>`;
+  document.body.appendChild(m);
+  m.querySelector('#mc').onclick=()=>m.remove();
+  m.querySelector('#mo').onclick=async()=>{try{await onOk(m)}catch(e){m.querySelector('#me').textContent=e.message}};
+  const first=m.querySelector('input');if(first)first.focus();
+  return m}
+
+function changeMyPassword(){
+  modal('Ganti password',`<div class="field"><label>Password lama</label><input id="pl" type="password"></div>
+    <div class="field"><label>Password baru</label><input id="pb" type="password"></div>`,async m=>{
+    await api('/me/password',{method:'PUT',json:{current:m.querySelector('#pl').value,password:m.querySelector('#pb').value}});
+    m.remove();alert('Password berhasil diganti')});
+}
+
 function mount(content,active){closeWs();
   app().innerHTML=`<header class="top"><span class="brand">Panel</span>
-   <a class="nl ${active==='servers'?'on':''}" href="#/">Server</a>${me.admin?`<a class="nl ${active==='admin'?'on':''}" href="#/admin">Admin</a>`:''}
-   <span class="sp"></span><span class="who">${esc(me.username)}</span><button class="btn ghost sm" id="logout">Keluar</button></header>
+   <nav class="nav"><a class="${active==='servers'?'on':''}" href="#/">Server</a>${me.admin?`<a class="${active==='admin'?'on':''}" href="#/admin">Admin</a>`:''}</nav>
+   <span class="sp"></span><span class="who">${esc(me.username)}${me.admin?' · ADMIN':''}</span>
+   <button class="btn paper sm" id="pwme">Password</button><button class="btn red sm" id="logout">Keluar</button></header>
    <main class="wrap">${content}</main>`;
+  $('#pwme').onclick=changeMyPassword;
   $('#logout').onclick=async()=>{await api('/logout',{method:'POST',json:{}}).catch(()=>{});me=null;location.hash='';boot()}}
 
 function loginView(err){closeWs();
-  app().innerHTML=`<div class="login"><div class="card"><h1>Panel Server</h1><p class="sub">Masuk untuk mengelola server</p>
+  app().innerHTML=`<div class="login"><div class="card yellow"><h1>Panel</h1><p class="sub">Masuk untuk mengelola server</p>
    <div class="field"><label>Username</label><input id="u" autocomplete="username" autocapitalize="off"></div>
    <div class="field"><label>Password</label><input id="p" type="password" autocomplete="current-password"></div>
    <button class="btn" id="go">Masuk</button><div class="err" id="le">${esc(err||'')}</div></div></div>`;
   const go=async()=>{$('#go').disabled=true;try{await api('/login',{json:{username:$('#u').value.trim(),password:$('#p').value}});boot()}catch(e){$('#le').textContent=e.message;$('#go').disabled=false}};
   $('#go').onclick=go;$('#p').onkeydown=e=>{if(e.key==='Enter')go()};$('#u').focus()}
 
-async function boot(){try{me=await api('/me')}catch{me=null;return loginView()}route()}
+function loadingView(){app().innerHTML=`<div class="login"><div class="card yellow" style="text-align:center"><h1>Panel</h1><p class="sub"><span class="spin"></span>&nbsp;Memuat...</p></div></div>`}
+function withTimeout(p,ms){return Promise.race([p,new Promise((_,rej)=>setTimeout(()=>rej(new Error('Server tidak merespons. Coba muat ulang halaman.')),ms))])}
+async function boot(){loadingView();
+  try{me=await withTimeout(api('/me'),10000)}catch(e){me=null;return loginView(e.message&&e.message!=='Belum login'?e.message:'')}
+  route()}
 window.onhashchange=()=>{if(me)route()};
+window.addEventListener('error',e=>{const a=app();if(a&&!a.innerHTML.trim())a.innerHTML='<div class="login"><div class="card yellow"><h1>Panel</h1><p class="sub">Ada error: '+String(e.message||'')+'</p><button class="btn" onclick="location.reload()">Muat ulang</button></div></div>'});
 function route(){const h=location.hash||'#/';
   if(h.startsWith('#/server/'))return serverView(decodeURIComponent(h.slice(9)));
   if(h==='#/admin'&&me.admin)return adminView();
   return listView()}
 
 async function listView(){const list=await api('/servers');
-  mount(`<div class="head"><h1>Server</h1><span class="muted">${list.length} server</span></div>
+  mount(`<div class="head"><h1>Server kamu</h1><span class="chip">${list.length} server</span></div>
   <div class="grid">${list.map(x=>`<a class="srv" href="#/server/${esc(x.id)}"><div class="n"><span>${esc(x.name)}</span>${badge(x.status)}</div>
-  <div class="muted">${esc(tlabel(x))} · RAM ${x.ram} MB${me.admin?' · Owner '+esc(x.ownerName):''}</div>
-  <div class="hint"><code>${esc(x.id)}</code></div></a>`).join('')||'<div class="card empty" style="grid-column:1/-1">Belum ada server</div>'}</div>`,'servers')}
+  <div style="margin-bottom:10px"><span class="chip">${esc(tlabel(x))}</span> <span class="chip">RAM ${x.ram} MB</span></div>
+  <div class="muted" style="font-size:13px">Kode <code>${esc(x.id)}</code></div></a>`).join('')||'<div class="card empty" style="grid-column:1/-1">Belum ada server</div>'}</div>`,'servers')}
 
-async function adminView(){const [srvs,users]=await Promise.all([api('/servers'),api('/users')]);
-  const types=await api('/types');
+async function adminView(){const [srvs,users,types]=await Promise.all([api('/servers'),api('/users'),api('/types')]);
   mount(`<div class="head"><h1>Admin</h1></div>
-  <div class="card"><h2>Buat server baru</h2><div class="form">
+  <div class="card yellow"><h2>Buat server baru</h2><div class="form">
     <input id="sn" placeholder="Nama server">
     <select id="so">${users.map(u=>`<option value="${u.id}">${esc(u.username)}</option>`).join('')}</select>
     <select id="st">${types.map(t=>`<option value="${t.id}">${esc(t.label)}</option>`).join('')}</select>
     <input id="sr" type="number" min="128" value="1024" placeholder="RAM (MB)">
     <button class="btn" id="sc">Buat</button></div><div class="err" id="se"></div></div>
-  <div class="card"><h2>Semua server (${srvs.length})</h2><div style="overflow:auto"><table><thead><tr><th>Nama</th><th>Tipe</th><th>Owner</th><th>Status</th><th>RAM</th><th>Kode</th><th></th></tr></thead><tbody>
-  ${srvs.map(x=>`<tr><td><a href="#/server/${esc(x.id)}">${esc(x.name)}</a></td><td>${esc(tlabel(x))}</td><td>${esc(x.ownerName)}</td><td>${badge(x.status)}</td><td>${x.ram} MB</td><td><code>${esc(x.id)}</code></td><td style="text-align:right"><button class="btn bad sm" data-del-srv="${esc(x.id)}">Hapus</button></td></tr>`).join('')||'<tr><td colspan=7 class="empty">Kosong</td></tr>'}
+  <div class="card"><h2>Semua server (${srvs.length})</h2><div style="overflow:auto"><table class="tbl"><thead><tr><th>Nama</th><th>Tipe</th><th>Owner</th><th>Status</th><th>RAM</th><th>Kode</th><th></th></tr></thead><tbody>
+  ${srvs.map(x=>`<tr><td><a href="#/server/${esc(x.id)}"><b>${esc(x.name)}</b></a></td><td>${esc(tlabel(x))}</td><td>${esc(x.ownerName)}</td><td>${badge(x.status)}</td><td>${x.ram} MB</td><td><code>${esc(x.id)}</code></td><td style="text-align:right"><button class="btn red sm" data-del-srv="${esc(x.id)}">Hapus</button></td></tr>`).join('')||'<tr><td colspan=7 class="empty">Kosong</td></tr>'}
   </tbody></table></div></div>
-  <div class="card"><h2>Pengguna</h2><div class="form">
+  <div class="card blue"><h2>Pengguna</h2><div class="form">
     <input id="un" placeholder="Username" autocapitalize="off"><input id="upw" placeholder="Password">
-    <label class="chk"><input type="checkbox" id="ua"> Admin</label><button class="btn" id="uc">Tambah</button></div><div class="err" id="ue"></div>
-  <div style="overflow:auto;margin-top:12px"><table><thead><tr><th>Username</th><th>Role</th><th>Telegram</th><th></th></tr></thead><tbody>
-  ${users.map(u=>`<tr><td>${esc(u.username)}</td><td>${u.admin?'Admin':'User'}</td><td class="muted">${esc(u.tg||'-')}</td><td style="text-align:right">${u.id===me.id?'':`<button class="btn bad sm" data-del-usr="${esc(u.id)}">Hapus</button>`}</td></tr>`).join('')}
+    <label class="chk"><input type="checkbox" id="ua"> Admin</label><button class="btn yellow" id="uc">Tambah</button></div><div class="err" id="ue" style="color:#fff"></div></div>
+  <div class="card"><div style="overflow:auto"><table class="tbl"><thead><tr><th>Username</th><th>Role</th><th>Telegram</th><th></th></tr></thead><tbody>
+  ${users.map(u=>`<tr><td><b>${esc(u.username)}</b></td><td>${u.admin?'<span class="chip">Admin</span>':'User'}</td><td class="muted">${esc(u.tg||'-')}</td><td style="text-align:right;white-space:nowrap"><button class="btn paper sm" data-pw-usr="${esc(u.id)}" data-name="${esc(u.username)}">Ganti password</button> ${u.id===me.id?'':`<button class="btn red sm" data-del-usr="${esc(u.id)}">Hapus</button>`}</td></tr>`).join('')}
   </tbody></table></div></div>`,'admin');
   $('#sc').onclick=async()=>{$('#se').textContent='';try{await post('/servers',{name:$('#sn').value.trim()||'Server',owner:$('#so').value,type:$('#st').value,ram:+$('#sr').value||1024});adminView()}catch(e){$('#se').textContent=e.message}};
   $('#uc').onclick=async()=>{$('#ue').textContent='';try{await post('/users',{username:$('#un').value.trim(),password:$('#upw').value,admin:$('#ua').checked});adminView()}catch(e){$('#ue').textContent=e.message}};
   document.querySelectorAll('[data-del-srv]').forEach(b=>b.onclick=async()=>{if(!confirm('Hapus server ini beserta file-nya?'))return;await api('/servers/'+b.dataset.delSrv,{method:'DELETE'});adminView()});
-  document.querySelectorAll('[data-del-usr]').forEach(b=>b.onclick=async()=>{if(!confirm('Hapus user ini beserta semua servernya?'))return;try{await api('/users/'+b.dataset.delUsr,{method:'DELETE'});adminView()}catch(e){alert(e.message)}})}
+  document.querySelectorAll('[data-del-usr]').forEach(b=>b.onclick=async()=>{if(!confirm('Hapus user ini beserta semua servernya?'))return;try{await api('/users/'+b.dataset.delUsr,{method:'DELETE'});adminView()}catch(e){alert(e.message)}});
+  document.querySelectorAll('[data-pw-usr]').forEach(b=>b.onclick=()=>modal('Ganti password '+b.dataset.name,`<div class="field"><label>Password baru</label><input id="np" type="password"></div>`,async m=>{
+    await api(`/users/${b.dataset.pwUsr}/password`,{method:'PUT',json:{password:m.querySelector('#np').value}});m.remove();alert('Password diganti')}))}
 
 async function serverView(id){S=await api('/servers/'+id);
   const isWeb=(S.type||'node')==='web';
-  const tabs=[['console',isWeb?'Info':'Console'],['files','Files'],['env','Environment'],['startup','Pengaturan']];
-  mount(`<div class="head"><div style="min-width:0;flex:1"><h1>${esc(S.name)}</h1><div class="muted" style="font-size:13px">${esc(tlabel(S))} · Kode <code>${esc(S.id)}</code></div></div>
-  <div id="stBadge">${badge(S.status)}</div>
-  ${isWeb?'':`<div class="power"><button class="btn ok sm" data-p="start">Start</button><button class="btn warn sm" data-p="restart">Restart</button><button class="btn ghost sm" data-p="stop">Stop</button><button class="btn bad sm" data-p="kill">Kill</button></div>`}</div>
+  const tabs=[['console',isWeb?'Info':'Console'],['files','Files'],['env','Environment'],['settings','Pengaturan']];
+  mount(`<div class="head"><div style="min-width:0;flex:1"><h1 style="overflow:hidden;text-overflow:ellipsis">${esc(S.name)}</h1>
+   <div class="muted" style="font-size:13px;margin-top:4px"><span class="chip">${esc(tlabel(S))}</span> Kode <code>${esc(S.id)}</code></div></div>
+   <div id="stBadge">${badge(S.status)}</div>
+   ${isWeb?'':`<div class="power"><button class="btn green sm" data-p="start">Start</button><button class="btn yellow sm" data-p="restart">Restart</button><button class="btn paper sm" data-p="stop">Stop</button><button class="btn red sm" data-p="kill">Kill</button></div>`}</div>
   <div class="tabs">${tabs.map(([k,l])=>`<a data-tab="${k}" class="${tab===k?'on':''}">${l}</a>`).join('')}</div>
   <div id="tb"></div>`,'servers');
   document.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>post(`/servers/${S.id}/power`,{action:b.dataset.p}).catch(e=>alert(e.message)));
   document.querySelectorAll('[data-tab]').forEach(a=>a.onclick=()=>{tab=a.dataset.tab;serverView(S.id)});
   pollT=setInterval(async()=>{try{const s=await api('/servers/'+S.id);const b=$('#stBadge');if(b)b.innerHTML=badge(s.status)}catch{}},3000);
-  ({console:consoleTab,files:filesTab,env:envTab,startup:settingsTab})[tab]()}
+  ({console:consoleTab,files:filesTab,env:envTab,settings:settingsTab})[tab]()}
 
 function consoleTab(){
   const isWeb=(S.type||'node')==='web';
-  $('#tb').innerHTML=(isWeb?`<div class="card"><p class="muted" style="margin:0">Website statis berjalan otomatis. Upload file website (index.html, css, js, gambar) di tab Files. Website tidak punya console.</p></div>`:
-  `<div class="term" id="term"></div>
-  <div class="cmd"><span>$</span><input id="ci" placeholder="Perintah Termux atau input bot, tanpa tombol mode" autocapitalize="off" autocomplete="off" spellcheck="false"><button class="btn ghost sm" id="stopc" style="margin-left:6px">Ctrl+C</button></div>`)+
-  `<div class="info">
-    <div><div class="lb"><span>CPU</span></div><div class="v" id="cpu">0%</div><div class="bar"><i id="cpub"></i></div></div>
-    <div><div class="lb"><span>RAM</span></div><div class="v" id="ram">0 / ${S.ram} MB</div><div class="bar"><i id="ramb"></i></div></div>
-    <div class="addr"><div class="lb"><span>Link</span><button class="btn ghost sm" id="cp" style="padding:2px 8px;font-size:12px">Salin</button></div><code id="addr">${esc(S.siteUrl)}</code></div>
-  </div>`;
-  const setStat=s=>{const b=$('#stBadge');if(b)b.innerHTML=badge(s)};
-  const setRes=(cpu,ram,limit)=>{if(!$('#cpu'))return;
-    $('#cpu').textContent=cpu.toFixed(1)+'%';$('#cpub').style.width=Math.min(100,cpu)+'%';
-    $('#ram').textContent=ram+' / '+limit+' MB';$('#ramb').style.width=(limit?Math.min(100,ram/limit*100):0)+'%'};
-  $('#cp').onclick=()=>{navigator.clipboard.writeText(S.siteUrl).then(()=>{$('#cp').textContent='Tersalin';setTimeout(()=>{if($('#cp'))$('#cp').textContent='Salin'},1500)}).catch(()=>{})};
-  if(isWeb){setRes(0,0,S.ram);return}
+  const notice=me.admin?'Mode admin: semua perintah Termux bebas (termasuk apt dan pkg). Awalan ! kirim input ke bot, $ paksa shell.':
+    'Mode user: perintah terbatas ('+(me.userCmds||[]).join(', ')+'). Input bot pakai teks biasa atau awalan !.';
+  if(isWeb){
+    $('#tb').innerHTML=`<div class="card yellow"><h2>Website statis</h2><p style="margin:0">Berjalan otomatis. Upload file website (index.html, css, js, gambar) di tab Files. Website tidak punya console.</p></div>`+statsHtml();
+    setRes(0,0,S.ram);wireCopy();return}
+  $('#tb').innerHTML=`<div class="termwrap"><div class="termbar"><span>Console</span><span class="dots"><i></i><i></i><i></i></span></div>
+   <div class="hintbar">${esc(notice)}</div>
+   <div class="term" id="term"></div>
+   <div class="cmd"><span>$</span><input id="ci" placeholder="${me.admin?'Perintah Termux, contoh: apt install -y python3':'Perintah atau input bot, contoh: ls'}" autocapitalize="off" autocomplete="off" spellcheck="false"><button class="btn red sm" id="stopc">Ctrl+C</button></div>
+   ${statsHtml()}</div>`;
+  wireCopy();
   const term=$('#term');
   const add=l=>{const near=term.scrollTop+term.clientHeight>=term.scrollHeight-30;const d=document.createElement('div');d.textContent=l;term.appendChild(d);
     while(term.childElementCount>1500)term.firstChild.remove();if(near)term.scrollTop=term.scrollHeight};
+  const setStat=s=>{const b=$('#stBadge');if(b)b.innerHTML=badge(s)};
   ws=new WebSocket((location.protocol==='https:'?'wss://':'ws://')+location.host+'/ws?id='+encodeURIComponent(S.id));
   ws.onmessage=e=>{const m=JSON.parse(e.data);
     if(m.t==='init'){m.logs.forEach(add);term.scrollTop=term.scrollHeight;setStat(m.status);if(m.stats)setRes(m.stats.cpu,m.stats.ram,m.limit)}
     else if(m.t==='log')add(m.d);
     else if(m.t==='status'){setStat(m.d);if(m.d==='offline')setRes(0,0,S.ram)}
     else if(m.t==='stats')setRes(m.cpu,m.ram,m.limit);
-    else if(m.t==='clear')term.innerHTML='';};
-  let cmdHist=[],hIdx=0;
+    else if(m.t==='clear')term.innerHTML=''};
+  let hist=[],hIdx=0;
   const ci=$('#ci');
-  $('#stopc').onclick=()=>{if(ws&&ws.readyState===1)ws.send(JSON.stringify({t:'ctrl'}))};
-  const sc=$('#stopc');if(sc)sc.onclick=()=>{if(ws&&ws.readyState===1)ws.send(JSON.stringify({t:'stopcmd'}))};
   ci.onkeydown=e=>{
-    if(e.key==='Enter'&&ci.value.trim()){if(ws&&ws.readyState===1)ws.send(JSON.stringify({t:'cmd',d:ci.value}));cmdHist.push(ci.value);hIdx=cmdHist.length;ci.value=''}
-    else if(e.key==='ArrowUp'&&hIdx>0){hIdx--;ci.value=cmdHist[hIdx]}
-    else if(e.key==='ArrowDown'){hIdx=Math.min(cmdHist.length,hIdx+1);ci.value=cmdHist[hIdx]||''}}}
+    if(e.key==='Enter'){const v=ci.value;if(ws&&ws.readyState===1)ws.send(JSON.stringify({t:'cmd',d:v}));if(v.trim())hist.push(v);hIdx=hist.length;ci.value=''}
+    else if(e.key==='ArrowUp'&&hIdx>0){hIdx--;ci.value=hist[hIdx]}
+    else if(e.key==='ArrowDown'){hIdx=Math.min(hist.length,hIdx+1);ci.value=hist[hIdx]||''}};
+  $('#stopc').onclick=()=>{if(ws&&ws.readyState===1)ws.send(JSON.stringify({t:'ctrl'}))}}
+
+function statsHtml(){return `<div class="stats" style="${''}">
+  <div><div class="lb"><span>CPU</span></div><div class="v" id="cpu">0%</div><div class="bar"><i id="cpub"></i></div></div>
+  <div><div class="lb"><span>RAM</span></div><div class="v" id="ram">0 / ${S.ram} MB</div><div class="bar"><i id="ramb"></i></div></div>
+  <div class="addr"><div class="lb"><span>Link</span><button class="btn yellow sm" id="cp">Salin</button></div><code id="addr">${esc(S.siteUrl)}</code></div>
+  </div>`}
+function setRes(cpu,ram,limit){if(!$('#cpu'))return;
+  $('#cpu').textContent=cpu.toFixed(1)+'%';$('#cpub').style.width=Math.min(100,cpu)+'%';
+  $('#ram').textContent=ram+' / '+limit+' MB';$('#ramb').style.width=(limit?Math.min(100,ram/limit*100):0)+'%'}
+function wireCopy(){const b=$('#cp');if(!b)return;
+  b.onclick=()=>{navigator.clipboard.writeText(S.siteUrl).then(()=>{b.textContent='Tersalin';setTimeout(()=>{if($('#cp'))$('#cp').textContent='Salin'},1500)}).catch(()=>{})}}
 
 async function filesTab(){
   const tb=$('#tb');let list;
@@ -219,21 +293,21 @@ async function filesTab(){
   const crumbs=['<a data-go="/">/</a>'];
   parts.forEach(p=>{acc+='/'+p;crumbs.push(`<span class="sep">/</span><a data-go="${esc(acc)}">${esc(p)}</a>`)});
   tb.innerHTML=`<div class="toolbar"><div class="crumbs">${crumbs.join('')}</div>
-   <div class="form" style="flex:0 0 auto"><button class="btn ghost sm" id="nd">Folder baru</button><button class="btn ghost sm" id="nf">File baru</button><label class="btn sm" style="cursor:pointer">Upload<input type="file" id="upl" multiple hidden></label></div></div>
+   <div class="form" style="flex:0 0 auto"><button class="btn paper sm" id="nd">Folder baru</button><button class="btn paper sm" id="nf">File baru</button><label class="btn sm" style="cursor:pointer">Upload<input type="file" id="upl" multiple hidden></label></div></div>
    <div id="prog"></div>
-   <div class="card" style="padding:0;overflow:auto"><table class="files"><tbody>
+   <div class="card" style="padding:0;overflow:auto"><table class="tbl files"><tbody>
    ${cwd!=='/'?`<tr><td class="nm" data-go="${esc(parent())}">..</td><td></td><td></td></tr>`:''}
-   ${list.map(x=>{const p=join(x.name);return `<tr><td class="nm" ${x.dir?`data-go="${esc(p)}"`:`data-edit="${esc(p)}"`}>${esc(x.name)}${x.dir?'/':''}</td><td class="muted" style="width:120px">${x.dir?'-':fmt(x.size)}</td><td class="act">${x.dir?'':`<a href="/api/servers/${S.id}/files/download?path=${encodeURIComponent(p)}" download>Unduh</a>`}${!x.dir&&/\.zip$/i.test(x.name)?`<button data-unzip="${esc(p)}">Ekstrak</button>`:''}<button data-del="${esc(p)}">Hapus</button></td></tr>`}).join('')||'<tr><td class="empty">Folder kosong</td></tr>'}
+   ${list.map(x=>{const p=join(x.name);return `<tr><td class="nm" ${x.dir?`data-go="${esc(p)}"`:`data-edit="${esc(p)}"`}>${esc(x.name)}${x.dir?'/':''}</td><td class="muted" style="width:120px">${x.dir?'-':fmt(x.size)}</td><td class="act">${x.dir?'':`<a class="btn paper sm" href="/api/servers/${S.id}/files/download?path=${encodeURIComponent(p)}" download>Unduh</a>`}${!x.dir&&/\.zip$/i.test(x.name)?`<button class="btn green sm" data-unzip="${esc(p)}">Ekstrak</button>`:''}<button class="btn red sm" data-del="${esc(p)}">Hapus</button></td></tr>`}).join('')||'<tr><td class="empty" colspan=3>Folder kosong</td></tr>'}
    </tbody></table></div>`;
   $('#nd').onclick=async()=>{const n=prompt('Nama folder');if(!n)return;await post(`/servers/${S.id}/files/mkdir`,{path:join(n)});filesTab()};
   $('#nf').onclick=async()=>{const n=prompt('Nama file');if(!n)return;await api(`/servers/${S.id}/files/write?path=${encodeURIComponent(join(n))}`,{text:''});editFile(join(n))};
   $('#upl').onchange=e=>uploadFiles([...e.target.files]);
-  tb.onclick=async e=>{const t=e.target;
+  tb.onclick=async e=>{const t=e.target.closest('[data-go],[data-edit],[data-unzip],[data-del]')||e.target;
     if(t.dataset.go!==undefined){cwd=t.dataset.go||'/';return filesTab()}
     if(t.dataset.edit!==undefined)return editFile(t.dataset.edit);
     if(t.dataset.unzip!==undefined){
       if(!confirm('Ekstrak '+t.dataset.unzip+' ke folder ini? File dengan nama sama akan ditimpa.'))return;
-      $('#prog').innerHTML='<div class="card up"><div class="row"><span><span class="spin"></span>&nbsp;Mengekstrak '+esc(t.dataset.unzip)+'...</span></div></div>';
+      $('#prog').innerHTML='<div class="card yellow up"><div class="row"><span><span class="spin"></span>&nbsp;Mengekstrak '+esc(t.dataset.unzip)+'...</span></div></div>';
       try{await post(`/servers/${S.id}/files/unzip`,{path:t.dataset.unzip})}catch(e){alert(e.message)}
       return filesTab()}
     if(t.dataset.del!==undefined&&confirm('Hapus '+t.dataset.del+'?')){await post(`/servers/${S.id}/files/delete`,{paths:[t.dataset.del]});filesTab()}}}
@@ -243,8 +317,8 @@ function uploadFiles(files){
   const next=()=>{
     if(i>=files.length){if($('#prog'))$('#prog').innerHTML='';return filesTab()}
     const f=files[i++];
-    $('#prog').innerHTML=`<div class="card up"><div class="row"><span>${esc(f.name)} <span class="muted">(${i}/${files.length}, ${fmt(f.size)})</span></span><span id="pc">0%</span></div>
-     <div class="bar"><i id="pb"></i></div><div class="row muted" id="ps">Mengunggah...</div></div>`;
+    $('#prog').innerHTML=`<div class="card blue up"><div class="row"><span>${esc(f.name)} (${i}/${files.length}, ${fmt(f.size)})</span><span id="pc">0%</span></div>
+     <div class="bar"><i id="pb"></i></div><div class="row" id="ps">Mengunggah...</div></div>`;
     const x=new XMLHttpRequest();
     x.open('POST',`/api/servers/${S.id}/files/upload?path=${encodeURIComponent(cwd)}&name=${encodeURIComponent(f.name)}`);
     x.setRequestHeader('Content-Type','application/octet-stream');
@@ -259,8 +333,8 @@ function uploadFiles(files){
 async function editFile(p){
   let txt;try{txt=await api(`/servers/${S.id}/files/read?path=${encodeURIComponent(p)}`)}catch(e){alert(e.message);return}
   $('#tb').innerHTML=`<div class="toolbar"><div class="crumbs">${esc(p)}</div>
-   <div class="form" style="flex:0 0 auto"><button class="btn ghost sm" id="bk">Kembali</button><button class="btn ok sm" id="sv">Simpan</button></div></div>
-   <textarea class="code" id="ed" spellcheck="false"></textarea><div class="err" id="ee"></div>`;
+   <div class="form" style="flex:0 0 auto"><button class="btn paper sm" id="bk">Kembali</button><button class="btn green sm" id="sv">Simpan</button></div></div>
+   <div class="card" style="padding:12px"><textarea class="code" id="ed" spellcheck="false"></textarea></div><div class="err" id="ee"></div>`;
   $('#ed').value=txt;
   $('#bk').onclick=()=>filesTab();
   $('#sv').onclick=async()=>{try{await api(`/servers/${S.id}/files/write?path=${encodeURIComponent(p)}`,{text:$('#ed').value});
@@ -269,29 +343,29 @@ async function editFile(p){
 async function envTab(){
   let txt='';try{txt=await api(`/servers/${S.id}/files/read?path=${encodeURIComponent('/.env')}`)}catch{}
   $('#tb').innerHTML=`<div class="card"><h2>Environment (.env)</h2>
-   <p class="muted" style="margin:-4px 0 12px">Satu variabel per baris dengan format KEY=VALUE. Variabel ini otomatis masuk ke proses server saat Start atau Restart. PORT sudah diisi otomatis oleh panel.</p>
-   <textarea class="code" id="ev" spellcheck="false" style="min-height:320px"></textarea>
-   <div class="form" style="margin-top:12px;justify-content:flex-end"><button class="btn" id="es">Simpan .env</button></div>
+   <p class="muted" style="margin:-4px 0 14px">Satu variabel per baris, format KEY=VALUE. Otomatis masuk ke proses server saat Start atau Restart. PORT sudah diisi otomatis.</p>
+   <textarea class="code" id="ev" spellcheck="false" style="min-height:300px"></textarea>
+   <div class="form" style="margin-top:14px;justify-content:flex-end"><button class="btn green" id="es">Simpan .env</button></div>
    <div class="err" id="ee2"></div>
    <div class="hint">Contoh: <code>OWNER_NUMBER=628xxxx</code> <code>PREFIX=.</code></div></div>`;
   $('#ev').value=txt;
   $('#es').onclick=async()=>{try{await api(`/servers/${S.id}/files/write?path=${encodeURIComponent('/.env')}`,{text:$('#ev').value});
-    $('#ee2').style.color='var(--ok)';$('#ee2').textContent='Tersimpan. Restart server agar berlaku.'}catch(e){$('#ee2').style.color='';$('#ee2').textContent=e.message}}}
+    $('#ee2').style.color='#0a7a3c';$('#ee2').textContent='Tersimpan. Restart server agar berlaku.'}catch(e){$('#ee2').style.color='';$('#ee2').textContent=e.message}}}
 
 function settingsTab(){
   const isWeb=(S.type||'node')==='web';
   $('#tb').innerHTML=`<div class="card"><h2>Detail</h2>
    <div class="kv"><span class="muted">Tipe</span><span>${esc(tlabel(S))}</span>
-   <span class="muted">Link acak</span><span><code>${esc(S.siteUrl)}</code></span>
+   <span class="muted">Link</span><span><code>${esc(S.siteUrl)}</code></span>
    <span class="muted">Link panel</span><span><code>${esc(S.address)}</code></span>
    <span class="muted">RAM</span><span>${S.ram} MB</span></div>
-   <p class="hint" style="margin-top:0">${isWeb?'Website statis: upload file ke tab Files. Link langsung bisa dibuka.':'Aplikasi kamu bisa dibuka di link acak jika mendengarkan (listen) pada port dari variabel PORT.'}</p></div>
-  ${isWeb?'':`<div class="card"><h2>Startup command</h2>
+   <p class="hint">${isWeb?'Website statis: upload file ke tab Files. Link langsung bisa dibuka.':'Aplikasi kamu bisa dibuka lewat link jika mendengarkan (listen) pada port dari variabel PORT.'}</p></div>
+  ${isWeb?'':`<div class="card yellow"><h2>Startup command</h2>
    <div class="field"><label>Perintah</label><input id="sc" value="${esc(S.startup)}" spellcheck="false"></div>
-   <p class="hint">Default untuk ${esc(tlabel(S))}: <code>${esc(({node:'npm install && npm start',python:'pip install -r requirements.txt; python3 main.py'})[S.type||'node']||'')}</code></p></div>`}
+   <p class="hint">Default ${esc(tlabel(S))}: <code>${esc(({node:'npm install && npm start',python:'pip install -r requirements.txt; python3 main.py'})[S.type||'node']||'')}</code></p></div>`}
   <div class="card"><h2>Jalankan otomatis</h2>
    <label class="chk"><input type="checkbox" id="au" ${S.autostart!==false?'checked':''}> Start otomatis saat panel dijalankan</label>
-   <div class="form" style="justify-content:flex-end;margin-top:12px"><span class="muted" id="sok"></span><button class="btn" id="ss">Simpan</button></div></div>`;
+   <div class="form" style="justify-content:flex-end;margin-top:14px"><span class="muted" id="sok"></span><button class="btn" id="ss">Simpan</button></div></div>`;
   $('#ss').onclick=async()=>{try{const body={autostart:$('#au').checked};if(!isWeb)body.startup=$('#sc').value;
     await api(`/servers/${S.id}/startup`,{method:'PUT',json:body});if(!isWeb)S.startup=body.startup;S.autostart=body.autostart;$('#sok').textContent='Tersimpan'}catch(e){alert(e.message)}}}
 
